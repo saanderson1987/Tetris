@@ -12,7 +12,7 @@ Using JavaScript, HTML, and CSS, I will build a game in which user will be able 
 
 ### Wireframe: 
 
-![wireframes](https://github.com/saanderson1987/quarry/blob/master/tetris_wireframe.png)
+![wireframes](https://github.com/saanderson1987/Tetris/blob/master/tetris_wireframe.png)
 
 
 ### Implementation Timeline 
