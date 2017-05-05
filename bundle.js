@@ -160,11 +160,13 @@ class I {
 
     this.piecePos.some( (piecePo) => {
       if (piecePo[0] === 19) {
+        // debugger;
         this.makeStatic();
         clearInterval(this.dropInterval);
         this.rowIsComplete();
         this.resetPos();
         this.dropPiece();
+        return true;
       }
     });
 
@@ -261,7 +263,7 @@ class I {
 
 
   makeStatic() {
-    debugger;
+    // debugger;
     this.piecePos.forEach( (piecePo) => {
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
     });
