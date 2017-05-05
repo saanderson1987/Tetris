@@ -175,10 +175,10 @@ class I {
         this.rowIsComplete();
         this.resetPos();
         this.dropPiece();
+
         return true;
       }
     });
-
 
 
   }
@@ -240,6 +240,9 @@ class I {
 
   clearRow(row) {
     console.log (`row ${row} is complete`);
+    // this.piecePos.forEach( (piecePo) => {
+    //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).removeAttr('static');
+    // });
     $(`ul[row=${row}]`).each( function () {
       $( this ).remove();
     });
@@ -258,9 +261,16 @@ class I {
 
 
   makeStatic() {
+    debugger;
     this.piecePos.forEach( (piecePo) => {
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
     });
+
+    // $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
+
+    // piecePos.forEach( (piecePo) => {
+    //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
+    // });
   }
 
   dropPiece() {
