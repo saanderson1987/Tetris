@@ -97,20 +97,23 @@ class Piece {
     });
   }
 
-  checkStop() {
-    this.piecePos.some( (piecePo) => {
+  atStop() {
+    return this.piecePos.some( (piecePo) => {
       if (piecePo[0] === 19
         || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
       ){
-        this.makeStatic();
-        clearInterval(this.dropInterval);
-        this.checkCompletesRow();
-        this.setPos();
-        this.dropPiece();
+        // clearInterval(this.dropInterval);
+        // this.makeStatic();
+        //
+        // this.checkCompletesRow();
+        // this.setPos();
+        // this.dropPiece();
         return true;
       }
     });
   }
+
+
 
   makeStatic() {
     this.piecePos.forEach( (piecePo) => {
@@ -177,9 +180,9 @@ class Piece {
     });
   }
 
-  dropPiece() {
-    this.dropInterval = setInterval(() => { this.moveDownOne(); }, 150);
-  }
+  // dropPiece() {
+  //   this.dropInterval = setInterval(() => { this.moveDownOne(); }, 150);
+  // }
 
 
 
@@ -207,9 +210,27 @@ class Game {
   startGame() {
     this.currentPiece = this.generatePiece();
     this.loadKeyFunctions();
-    this.currentPiece.dropPiece();
+    this.dropPiece();
 
   }
+
+  dropPiece() {
+    let currentPiece = this.currentPiece;
+    this.dropInterval = setInterval(() => {
+      currentPiece.moveDownOne();
+      if (currentPiece.atStop()) {
+        console.log('at bottom');
+        // debugger;
+        currentPiece.makeStatic();
+        currentPiece.checkCompletesRow();
+        clearInterval(this.dropInterval);
+        this.resetKeyFunctions();
+        this.startGame();
+      }
+    }, 150);
+  }
+
+
 
   generatePiece() {
     let max = 2;
@@ -225,7 +246,8 @@ class Game {
 
   loadKeyFunctions() {
     let currentPiece = this.currentPiece;
-    $(document).keydown( function(e) {
+    $(document).on("keydown", function(e) {
+      e.preventDefault();
       switch (e.which) {
       case 37:
         currentPiece.moveLeft();
@@ -239,6 +261,11 @@ class Game {
       }
     });
   }
+
+  resetKeyFunctions() {
+    $(document).off("keydown");
+  }
+
 
 }
 
@@ -367,11 +394,10 @@ class IPiece extends Piece  {
           }
           piecePo[0] += 1;
           $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          
+
         });
       }
     }
-    this.checkStop();
   }
 
   rotate() {
@@ -478,7 +504,7 @@ class OPiece extends Piece  {
         $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
       });
     }
-    this.checkStop();
+    // this.checkStop();
   }
 
   rotate() {
