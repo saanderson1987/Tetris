@@ -63,158 +63,64 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports) {
 
-Array.prototype.unique = function() {
-  return this.filter(function (value, index, self) {
-    return self.indexOf(value) === index;
-  });
-};
 
 
-const $grid = $("#grid");
 
-const addRow = (rowIdx) => {
-  const $row = $("<ul>").addClass("row").attr("row", rowIdx);
-  for(let colIdx= 0; colIdx < 10; colIdx++) {
-    const $square = $("<li>").addClass("square").attr("pos", [rowIdx, colIdx] );
-    $row.append($square);
-  }
-  return $row;
-  // $grid.append($row);
-};
+class Piece {
 
-
-for(let rowIdx = 0; rowIdx< 20; rowIdx++) {
-  // addRow(rowIdx);
-  $grid.append(addRow(rowIdx));
-}
-
-///////////////////////////////
-
-class I {
-
-  constructor() {
-    this.piecePos = [ [0, 3], [0, 4], [0,5], [0,6] ];
+  constructor(grid) {
+    this.grid = grid;
+    this.pieceLayout = this.setLayout();
     this.setPos();
-    this.pieceLayout = 'horizontal';
+
+  }
+
+  setLayout() {
+    return Math.random() < 0.5 ? "horizontal" : "vertical";
   }
 
   setPos() {
+    this.piecePos = [];
+    this.colorPos();
+  }
+
+  colorPos() {
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
   }
 
-  resetPos() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos = [ [0, 3], [0, 4], [0,5], [0,6] ];
-      this.setPos();
-    } else {
-      this.piecePos = [ [0,4] ];
-      this.setPos();
-    }
-  }
-
-  moveDownOne() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos.forEach( (piecePo) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        piecePo[0] += 1;
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
-      });
-    } else {
-      if (this.piecePos.length < 4) {
-        let oldTopPiece = this.piecePos[0];
-        this.piecePos.unshift([ (oldTopPiece[0]), oldTopPiece[1] ]);
-        this.piecePos.forEach( (piecePo, idx) => {
-          if (idx === 0) {
-            return;
-          }
-          piecePo[0] += 1;
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
-        });
-      } else {
-        this.piecePos.forEach( (piecePo, idx) => {
-          if (idx === 0) {
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          }
-          piecePo[0] += 1;
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
-          if (idx === 3) {
-          }
-        });
-      }
-    }
-
-
-    // if (rowComplete === true) {
-    //   // debugger;
-    //   console.log("complete row!");
-    // }
-
+  checkStop() {
     this.piecePos.some( (piecePo) => {
-      if (piecePo[0] === 19) {
-        // debugger;
+      if (piecePo[0] === 19
+        || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+      ){
         this.makeStatic();
         clearInterval(this.dropInterval);
-        this.rowIsComplete();
-        this.resetPos();
+        this.checkCompletesRow();
+        this.setPos();
         this.dropPiece();
         return true;
       }
     });
-
-    this.piecePos.some( (piecePo) => {
-      if ($( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"){
-        this.makeStatic();
-        clearInterval(this.dropInterval);
-        this.rowIsComplete();
-        this.resetPos();
-        this.dropPiece();
-
-        return true;
-      }
-    });
-
-
   }
 
-  // rowIsComplete () {
-  //   let rowComplete = true;
-  //   this.piecePos.forEach( (piecePo) => {
-  //     $( `ul[row='${piecePo[0]}'`).children().each( function() {
-  //       if ($( this ).attr("static") !== "true" ) {
-  //         debugger;
-  //         rowComplete = false;
-  //         return false;
-  //       }
-  //     });
-  //   });
-  //   return rowComplete;
-  // }
+  makeStatic() {
+    this.piecePos.forEach( (piecePo) => {
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
+    });
+  }
 
-  // rowIsComplete() {
-  //   $(`ul[row=19]`).each( function () {
-  //     let rowComplete = true;
-  //     $( this ).children().each( function() {
-  //       if ($( this ).attr("static") !== "true" ) {
-  //         rowComplete = false;
-  //       }
-  //     });
-  //     if (rowComplete) {
-  //       console.log ('row is complete');
-  //     }
-  //   });
-  // }
-
-  rowIsComplete() {
-    const clearRow = this.clearRow;
+  checkCompletesRow() {
+    // const clearRow = this.clearRow;
+    const grid = this.grid;
     let completedRows = [];
 
     this.piecePos.forEach ( (piecePo) => {
@@ -226,7 +132,7 @@ class I {
           }
         });
         if (rowComplete) {
-          clearRow(piecePo[0]);
+          grid.clearRow(piecePo[0]);
           completedRows.push(piecePo[0]);
         }
       });
@@ -236,47 +142,6 @@ class I {
       return completedRows.indexOf(row) === index;
     });
 
-
-
-  }
-
-  clearRow(row) {
-    console.log (`row ${row} is complete`);
-    // this.piecePos.forEach( (piecePo) => {
-    //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).removeAttr('static');
-    // });
-    $(`ul[row=${row}]`).each( function () {
-      $( this ).remove();
-    });
-
-    $grid.prepend(addRow(1));
-
-    $('ul').each( function (rowIdx) {
-      $( this ).attr('row', rowIdx);
-      $( this ).children().each( function(colIdx) {
-        $( this ).attr('pos', [rowIdx, colIdx]);
-      });
-    });
-
-  }
-
-
-
-  makeStatic() {
-    // debugger;
-    this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
-    });
-
-    // $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
-
-    // piecePos.forEach( (piecePo) => {
-    //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
-    // });
-  }
-
-  dropPiece() {
-    this.dropInterval = setInterval(() => { this.moveDownOne(); }, 150);
   }
 
   moveLeft() {
@@ -292,15 +157,11 @@ class I {
     this.piecePos.forEach( (piecePo) => {
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
       piecePo[1] -= 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
   }
 
   moveRight() {
-    // if (this.piecePos[this.piecePos.length-1][1] === 9) {
-    //   return;
-    // }
-
     let rightPiece = this.piecePos[this.piecePos.length - 1];
     if (
       rightPiece[1] === 9
@@ -312,11 +173,206 @@ class I {
     this.piecePos.forEach( (piecePo) => {
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
       piecePo[1] += 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
   }
 
+  dropPiece() {
+    this.dropInterval = setInterval(() => { this.moveDownOne(); }, 150);
+  }
 
+
+
+
+}
+
+module.exports = Piece;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Grid = __webpack_require__(2);
+const IPiece = __webpack_require__(3);
+const OPiece = __webpack_require__(4);
+
+class Game {
+
+  constructor() {
+    this.grid = new Grid;
+    this.startGame();
+  }
+
+  startGame() {
+    this.currentPiece = this.generatePiece();
+    this.loadKeyFunctions();
+    this.currentPiece.dropPiece();
+
+  }
+
+  generatePiece() {
+    let max = 2;
+    let min = 1;
+    let pieceNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    switch (pieceNum) {
+      case 1:
+        return new IPiece(this.grid);
+      case 2:
+        return new OPiece(this.grid);
+    }
+  }
+
+  loadKeyFunctions() {
+    let currentPiece = this.currentPiece;
+    $(document).keydown( function(e) {
+      switch (e.which) {
+      case 37:
+        currentPiece.moveLeft();
+        break;
+      case 38:
+        currentPiece.rotate();
+        break;
+      case 39:
+        currentPiece.moveRight();
+        break;
+      }
+    });
+  }
+
+}
+
+
+module.exports = Game;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+//
+// const $grid = $("#grid");
+//
+// const addRow = (rowIdx) => {
+//   const $row = $("<ul>").addClass("row").attr("row", rowIdx);
+//   for(let colIdx= 0; colIdx < 10; colIdx++) {
+//     const $square = $("<li>").addClass("square").attr("pos", [rowIdx, colIdx] );
+//     $row.append($square);
+//   }
+//   return $row;
+//   // $grid.append($row);
+// };
+//
+//
+// for(let rowIdx = 0; rowIdx< 20; rowIdx++) {
+//   // addRow(rowIdx);
+//   $grid.append(addRow(rowIdx));
+// }
+
+class Grid {
+
+  constructor() {
+    this.grid = $("#grid");
+    this.create();
+  }
+
+  create() {
+    for(let rowIdx = 0; rowIdx< 20; rowIdx++) {
+      // addRow(rowIdx);
+      this.grid.append(this.addRow(rowIdx));
+    }
+  }
+
+  addRow(rowIdx) {
+    const $row = $("<ul>").addClass("row").attr("row", rowIdx);
+    for(let colIdx= 0; colIdx < 10; colIdx++) {
+      const $square = $("<li>").addClass("square").attr("pos", [rowIdx, colIdx] );
+      $row.append($square);
+    }
+    return $row;
+    // $grid.append($row);
+  }
+
+  clearRow(row) {
+    $(`ul[row=${row}]`).each( function () {
+      $( this ).remove();
+    });
+
+    this.grid.prepend(this.addRow(1));
+
+    $('ul').each( function (rowIdx) {
+      $( this ).attr('row', rowIdx);
+      $( this ).children().each( function(colIdx) {
+        $( this ).attr('pos', [rowIdx, colIdx]);
+      });
+    });
+
+  }
+
+
+}
+
+module.exports = Grid;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class IPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "green";
+  }
+
+  setPos() {
+    if (this.pieceLayout === 'horizontal') {
+      this.piecePos = [ [0, 3], [0, 4], [0,5], [0,6] ];
+    } else {
+      this.piecePos = [ [0,4] ];
+    }
+
+    this.colorPos();
+  }
+
+  moveDownOne() {
+    if (this.pieceLayout === 'horizontal') {
+      this.piecePos.forEach( (piecePo) => {
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        piecePo[0] += 1;
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      });
+    } else {
+      if (this.piecePos.length < 4) {
+        let oldTopPiece = this.piecePos[0];
+        this.piecePos.unshift([ (oldTopPiece[0]), oldTopPiece[1] ]);
+        this.piecePos.forEach( (piecePo, idx) => {
+          if (idx === 0) {
+            return;
+          }
+          piecePo[0] += 1;
+          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+        });
+      } else {
+        this.piecePos.forEach( (piecePo, idx) => {
+          if (idx === 0) {
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+          }
+          piecePo[0] += 1;
+          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+          
+        });
+      }
+    }
+    this.checkStop();
+  }
 
   rotate() {
     if (this.pieceLayout === 'horizontal') {
@@ -327,25 +383,25 @@ class I {
             piecePo[0] -= 2;
             piecePo[1] += 2;
             // if ( $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static") === "true") {
-            //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             //   break;
             // }
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
           case 1:
             piecePo[0] -= 1;
             piecePo[1] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
           case 2:
             break;
           case 3:
             piecePo[0] += 1;
             piecePo[1] -= 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
         }
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
       });
       this.pieceLayout = 'vertical';
     } else {
@@ -355,22 +411,22 @@ class I {
           case 0:
             piecePo[0] += 2;
             piecePo[1] -= 2;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
           case 1:
             piecePo[0] += 1;
             piecePo[1] -= 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
           case 2:
             break;
           case 3:
             piecePo[0] -= 1;
             piecePo[1] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
             break;
         }
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "green");
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
       });
       this.pieceLayout = 'horizontal';
 
@@ -379,22 +435,129 @@ class I {
 
 }
 
-const IPiece = new I;
-$(document).keydown( function(e) {
-  switch (e.which) {
-  case 37:
-    IPiece.moveLeft();
-    break;
-  case 38:
-    IPiece.rotate();
-    break;
-  case 39:
-    IPiece.moveRight();
-    break;
+module.exports = IPiece;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class OPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "blue";
+  }
+
+  setPos() {
+    this.piecePos = [ [0, 4], [0, 5] ];
+    this.colorPos();
+  }
+
+  moveDownOne() {
+    if (this.piecePos.length < 4) {
+      let oldTopPieces = JSON.parse(JSON.stringify(this.piecePos));
+      this.piecePos = oldTopPieces.concat(this.piecePos);
+      for(let i = 2; i < this.piecePos.length; i++) {
+        this.piecePos[i][0] += 1;
+        // let piecePo = this.piecePos[i];
+        $( `li[pos='${this.piecePos[i][0]},${this.piecePos[i][1]}']` ).css("background-color", this.color());
+      }
+    } else {
+      this.piecePos.forEach( (piecePo, idx) => {
+        if (idx < 2) {
+          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        }
+        piecePo[0] += 1;
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      });
+    }
+    this.checkStop();
+  }
+
+  rotate() {
+    if (this.pieceLayout === 'horizontal') {
+      this.piecePos.forEach( (piecePo, idx) => {
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        switch (idx) {
+          case 0:
+            piecePo[0] -= 2;
+            piecePo[1] += 2;
+            // if ( $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static") === "true") {
+            //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            //   break;
+            // }
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+          case 1:
+            piecePo[0] -= 1;
+            piecePo[1] += 1;
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+          case 2:
+            break;
+          case 3:
+            piecePo[0] += 1;
+            piecePo[1] -= 1;
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+        }
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      });
+      this.pieceLayout = 'vertical';
+    } else {
+      this.piecePos.forEach( (piecePo, idx) => {
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        switch (idx) {
+          case 0:
+            piecePo[0] += 2;
+            piecePo[1] -= 2;
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+          case 1:
+            piecePo[0] += 1;
+            piecePo[1] -= 1;
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+          case 2:
+            break;
+          case 3:
+            piecePo[0] -= 1;
+            piecePo[1] += 1;
+            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+            break;
+        }
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      });
+      this.pieceLayout = 'horizontal';
+
+    }
+  }
+
+}
+
+module.exports = OPiece;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Game = __webpack_require__ (1);
+
+$(document).one("keydown", function(e) {
+  // debugger;
+
+  if (e.which === 32) {
+    new Game;
   }
 });
-
-IPiece.dropPiece();
 
 
 /***/ })
