@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -198,8 +198,9 @@ module.exports = Piece;
 
 const Grid = __webpack_require__(2);
 const IPiece = __webpack_require__(3);
-const OPiece = __webpack_require__(5);
+const OPiece = __webpack_require__(6);
 const JPiece = __webpack_require__(4);
+const LPiece = __webpack_require__(5);
 
 class Game {
 
@@ -234,24 +235,24 @@ class Game {
 
 
   generatePiece() {
-    // return new JPiece(this.grid);
-    let max = 3;
-    let min = 1;
-    let pieceNum = Math.floor(Math.random() * (max - min + 1)) + min;
-    switch (pieceNum) {
-      case 1:
-        return new IPiece(this.grid);
-      case 2:
-        return new OPiece(this.grid);
-      case 3:
-        return new JPiece(this.grid);
-    }
+    return new LPiece(this.grid);
+    // let max = 3;
+    // let min = 1;
+    // let pieceNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    // switch (pieceNum) {
+    //   case 1:
+    //     return new IPiece(this.grid);
+    //   case 2:
+    //     return new OPiece(this.grid);
+    //   case 3:
+    //     return new JPiece(this.grid);
+    // }
   }
 
   loadKeyFunctions() {
     let currentPiece = this.currentPiece;
     $(document).on("keydown", function(e) {
-      e.preventDefault();
+      // e.preventDefault();
       switch (e.which) {
       case 37:
         currentPiece.moveLeft();
@@ -758,6 +759,85 @@ module.exports = JPiece;
 
 const Piece = __webpack_require__(0);
 
+class LPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "yellow";
+  }
+
+  setLayout() {
+    return 3;
+    // return Math.floor(Math.random() * 4);
+    // // let layoutNum = Math.floor(Math.random() * 4) + 1;
+    // // switch (layoutNum) {
+    // //   case 1:
+    // //     return 'h1';
+    // //   case 2:
+    // //     return 'v1';
+    // //   case 3:
+    // //     return 'h2';
+    // //   case 4:
+    // //     return 'v2';
+    // // }
+  }
+  setPos() {
+
+    this.rotationKeys = [
+      [ [0,3], [-1,3], [-1,4], [-1,5] ],
+      [ [-2, 4], [-2,5], [-1,5], [0,5] ],
+      [ [0, 3], [0, 4], [0, 5], [-1, 5] ],
+      [ [-2,4], [-1,4], [0, 4], [0, 5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+
+    this.colorPos();
+  }
+
+  moveDownOne() {
+    this.piecePos.forEach( (piecePo, idx) => {
+
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+      piecePo[0] += 1;
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      this.colorPos();
+    });
+
+  }
+
+  rotate() {
+    this.piecePos.forEach( (piecePo) => {
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+    });
+
+    let newPieceLayout = (this.pieceLayout + 1) % 4;
+    this.piecePos.forEach( (piecePo, idx) => {
+
+      piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
+      piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
+
+    });
+    this.pieceLayout = newPieceLayout;
+    this.colorPos();
+
+  }
+
+}
+
+module.exports = LPiece;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
 class OPiece extends Piece  {
 
   constructor(grid){
@@ -860,7 +940,7 @@ module.exports = OPiece;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Game = __webpack_require__ (1);
