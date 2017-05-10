@@ -83,37 +83,76 @@ class Piece {
   }
 
   setLayout() {
-    return Math.random() < 0.5 ? "horizontal" : "vertical";
+    return ;
   }
 
-  setPos() {
-    this.piecePos = [];
-    this.colorPos();
-  }
+
 
   colorPos() {
     this.piecePos.forEach( (piecePo) => {
+
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
   }
 
-  atStop() {
-    return this.piecePos.some( (piecePo) => {
-      if (piecePo[0] === 19
-        || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
-      ){
-        // clearInterval(this.dropInterval);
-        // this.makeStatic();
-        //
-        // this.checkCompletesRow();
-        // this.setPos();
-        // this.dropPiece();
-        return true;
-      }
+  moveDownOne() {
+    this.piecePos.forEach( (piecePo, idx) => {
+
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+      piecePo[0] += 1;
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      this.colorPos();
     });
+
+  }
+
+  rotate() {
+    this.piecePos.forEach( (piecePo) => {
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+    });
+
+    let newPieceLayout = (this.pieceLayout + 1) % this.rotationKeys.length;
+    this.piecePos.forEach( (piecePo, idx) => {
+
+      piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
+      piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
+
+    });
+    this.pieceLayout = newPieceLayout;
+    this.colorPos();
+
   }
 
 
+
+
+  checkStop() {
+
+
+    for (let i = 0; i < this.piecePos.length; i++) {
+      let piecePo = this.piecePos[i];
+      if (piecePo[0] === 19
+        || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+      ){
+        if (piecePo[0] < 0) {
+          return "game over";
+        } else {
+          return "make static";
+        }
+      }
+    }
+    // return this.piecePos.some( (piecePo) => {
+    //   if (piecePo[0] === 19
+    //     || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+    //   ){
+    //     if (piecePo[0] < 0) {
+    //       return "game over";
+    //     } else {
+    //       return "make static";
+    //     }
+    //   }
+    // });
+  }
 
   makeStatic() {
     this.piecePos.forEach( (piecePo) => {
@@ -201,6 +240,9 @@ const IPiece = __webpack_require__(3);
 const OPiece = __webpack_require__(6);
 const JPiece = __webpack_require__(4);
 const LPiece = __webpack_require__(5);
+const SPiece = __webpack_require__(8);
+const TPiece = __webpack_require__(9);
+const ZPiece = __webpack_require__(10);
 
 class Game {
 
@@ -220,14 +262,19 @@ class Game {
     let currentPiece = this.currentPiece;
     this.dropInterval = setInterval(() => {
       currentPiece.moveDownOne();
-      if (currentPiece.atStop()) {
+      // debugger;
+      if (currentPiece.checkStop()==="make static") {
         console.log('at bottom');
-        // debugger;
         currentPiece.makeStatic();
         currentPiece.checkCompletesRow();
         clearInterval(this.dropInterval);
         this.resetKeyFunctions();
         this.startGame();
+      }
+      else if (currentPiece.checkStop()==="game over") {
+        console.log('GAME OVER');
+        currentPiece.checkCompletesRow();
+        clearInterval(this.dropInterval);
       }
     }, 150);
   }
@@ -235,18 +282,10 @@ class Game {
 
 
   generatePiece() {
-    return new LPiece(this.grid);
-    // let max = 3;
-    // let min = 1;
-    // let pieceNum = Math.floor(Math.random() * (max - min + 1)) + min;
-    // switch (pieceNum) {
-    //   case 1:
-    //     return new IPiece(this.grid);
-    //   case 2:
-    //     return new OPiece(this.grid);
-    //   case 3:
-    //     return new JPiece(this.grid);
-    // }
+    return new OPiece(this.grid);
+    let pieces = [IPiece, OPiece, JPiece, LPiece, SPiece, TPiece, ZPiece];
+    let pieceNum = Math.floor(Math.random() * 6);
+    return new pieces[pieceNum](this.grid);
   }
 
   loadKeyFunctions() {
@@ -364,108 +403,24 @@ class IPiece extends Piece  {
     return "green";
   }
 
-  setPos() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos = [ [0, 3], [0, 4], [0,5], [0,6] ];
-    } else {
-      this.piecePos = [ [0,4] ];
-    }
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+  }
 
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-1, 3], [-1, 4], [-1,5], [-1,6] ],
+      [ [-3, 4], [-2, 4], [-1, 4], [0, 4] ],
+      [ [-2, 3], [-2, 4], [-2,5], [-2,6] ],
+      [ [-3, 5], [-2, 5], [-1, 5], [0, 5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
     this.colorPos();
   }
 
-  moveDownOne() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos.forEach( (piecePo) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        piecePo[0] += 1;
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-    } else {
-      if (this.piecePos.length < 4) {
-        let oldTopPiece = this.piecePos[0];
-        this.piecePos.unshift([ (oldTopPiece[0]), oldTopPiece[1] ]);
-        this.piecePos.forEach( (piecePo, idx) => {
-          if (idx === 0) {
-            return;
-          }
-          piecePo[0] += 1;
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-        });
-      } else {
-        this.piecePos.forEach( (piecePo, idx) => {
-          if (idx === 0) {
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          }
-          piecePo[0] += 1;
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
 
-        });
-      }
-    }
-  }
-
-  rotate() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos.forEach( (piecePo, idx) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        switch (idx) {
-          case 0:
-            piecePo[0] -= 2;
-            piecePo[1] += 2;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 1:
-            piecePo[0] -= 1;
-            piecePo[1] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 2:
-            break;
-          case 3:
-            piecePo[0] += 1;
-            piecePo[1] -= 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-        }
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-      this.pieceLayout = 'vertical';
-    } else {
-      let lastPiece = JSON.parse(JSON.stringify(this.piecePos[this.piecePos.length-1]));
-      this.piecePos.forEach( (piecePo, idx) => {
-        piecePo[0] += 1;
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-      this.piecePos.push( [0, lastPiece[1]]);
-      // this.piecePos.forEach( (piecePo, idx) => {
-      //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-      //   switch (idx) {
-      //     case 0:
-      //       piecePo[0] += 2;
-      //       piecePo[1] -= 2;
-      //       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      //       break;
-      //     case 1:
-      //       piecePo[0] += 1;
-      //       piecePo[1] -= 1;
-      //       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      //       break;
-      //     case 2:
-      //       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      //       break;
-      //     case 3:
-      //       piecePo[0] -= 1;
-      //       piecePo[1] += 1;
-      //       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      //       break;
-      //   }
-      //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      // });
-      this.pieceLayout = 'horizontal';
-
-    }
-  }
 
 }
 
@@ -490,260 +445,22 @@ class JPiece extends Piece  {
   }
 
   setLayout() {
-    let layoutNum = Math.floor(Math.random() * 4) + 1;
-    switch (layoutNum) {
-      case 1:
-        return 'h1';
-      case 2:
-        return 'v1';
-      case 3:
-        return 'h2';
-      case 4:
-        return 'v2';
-    }
-    // return 'v1';
+    return Math.floor(Math.random() * 4);
   }
-  setPos() {
-    switch (this.pieceLayout) {
-      case 'h1':
-        this.piecePos = [ [0,5] ];
-        break;
-      case 'v1':
-        this.piecePos = [ [0,4], [0,5] ];
-        break;
-      case 'h2':
-        this.piecePos = [ [0, 3], [0, 4], [0, 5] ];
-        break;
-      case 'v2':
-        this.piecePos = [ [0,4] ];
-        break;
-    }
 
+  setPos() {
+    this.rotationKeys = [
+      [ [-1,3], [-1,4], [-1,5], [0,5] ],
+      [ [0,3], [-2,4], [-1,4], [0,4]  ],
+      [ [-2,3], [-1,3], [-1,4], [-1,5] ],
+      [ [-2,4], [-1,4], [0,4], [-2,5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
     this.colorPos();
   }
 
-  moveDownOne() {
-    switch (this.pieceLayout) {
-      case 'h1':
-        if (this.piecePos.length < 4) {
-          let firstPiece = JSON.parse(JSON.stringify(this.piecePos[0]));
-          $( `li[pos='${firstPiece[0]},${firstPiece[1]}']` ).css("background-color", "white");
-          this.piecePos.unshift(
-            [0, firstPiece[1] - 2],
-            [0, firstPiece[1] - 1],
-            firstPiece
-          );
-          this.piecePos[3][0] += 1;
-          this.colorPos();
-        } else {
-          this.piecePos.forEach( (piecePo, idx) => {
-            if (idx < 3) {
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-            }
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-        }
-        break;
-      case 'v1':
-        if (this.piecePos.length < 4) {
-          let secondPiece = JSON.parse(JSON.stringify(this.piecePos[this.piecePos.length-1]));
-          this.piecePos.forEach( (piecePo, idx) => {
-            if (idx === 0) {
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-            }
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-          this.piecePos.push(
-            [0, secondPiece[1]]
-          );
-        } else {
-          this.piecePos.forEach( (piecePo, idx) => {
-            if(idx === 0 || idx === this.piecePos.length - 1) {
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-            }
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-        }
-        break;
-      case 'h2':
-        if (this.piecePos.length < 4) {
-          let firstPiece = JSON.parse(JSON.stringify(this.piecePos[0]));
-          this.piecePos.unshift(firstPiece);
-          for (let i = 1; i < this.piecePos.length; i ++) {
-            if (i > 0) {
-              $( `li[pos='${this.piecePos[i][0]},${this.piecePos[i][1]}']` ).css("background-color", "white");
-            }
-            this.piecePos[i][0] += 1;
-            $( `li[pos='${this.piecePos[i][0]},${this.piecePos[i][1]}']` ).css("background-color", this.color());
-          }
-          this.colorPos();
-        } else {
-          this.piecePos.forEach( (piecePo, idx) => {
-            if (idx !== 1) {
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-            }
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-        }
-        break;
-      case 'v2':
-        if (this.piecePos.length < 4) {
 
-          let lastPiece = JSON.parse(JSON.stringify(this.piecePos[this.piecePos.length-1]));
-          this.piecePos.forEach( (piecePo, idx) => {
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-          this.piecePos.push( [0, lastPiece[1]]);
-          if (this.piecePos.length === 3) {
-            this.piecePos.push( [0, lastPiece[1] + 1]);
-          }
-
-
-
-          // let lastPiece = JSON.parse(JSON.stringify(this.piecePos[this.piecePos.length-1]));
-          // this.piecePos.push([0, lastPiece[1]]);
-          // if (this.piecePos.length === 3) {
-          //   this.piecePos.push([0, lastPiece[1]+1]);
-          // }
-          // this.piecePos.forEach( (piecePo, idx) => {
-          //   // if (idx > 1) {
-          //   //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          //   // }
-          //   piecePo[0] += 1;
-          //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          // });
-        } else {
-          this.piecePos.forEach( (piecePo, idx) => {
-            if(idx > 1) {
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-            }
-            piecePo[0] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-          });
-        }
-        break;
-    }
-  }
-
-
-
-
-  rotate() {
-    switch (this.pieceLayout) {
-      case 'h1':
-        this.piecePos.forEach( (piecePo, idx) => {
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          switch (idx) {
-            case 0:
-              piecePo[0] += 1;
-              piecePo[1] += 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 1:
-              piecePo[0] += 1;
-              piecePo[1] += 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 2:
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 3:
-              piecePo[0] -= 2;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-          }
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-        });
-        this.pieceLayout = 'v1';
-        break;
-      case 'v1':
-        this.piecePos.forEach( (piecePo, idx) => {
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          switch (idx) {
-            case 0:
-              piecePo[0] -= 1;
-              piecePo[1] -= 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 1:
-              piecePo[1] -= 2;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 2:
-              piecePo[0] += 1;
-              piecePo[1] -= 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 3:
-              piecePo[0] += 2;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-          }
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-        });
-        this.pieceLayout = 'h2';
-        break;
-      case 'h2':
-        this.piecePos.forEach( (piecePo, idx) => {
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          switch (idx) {
-            case 0:
-              piecePo[0] += 1;
-              piecePo[1] += 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 1:
-              piecePo[0] -= 1;
-              piecePo[1] += 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 2:
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              piecePo[0] -= 2;
-              break;
-            case 3:
-              piecePo[0] -= 2;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-          }
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-        });
-        this.pieceLayout = 'v2';
-        break;
-      case 'v2':
-        this.piecePos.forEach( (piecePo, idx) => {
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-          switch (idx) {
-            case 0:
-              piecePo[0] -= 1;
-              piecePo[1] -= 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 1:
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 2:
-              piecePo[0] += 1;
-              piecePo[1] += 1;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-            case 3:
-              piecePo[0] += 2;
-              $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-              break;
-          }
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-        });
-        this.pieceLayout = 'h1';
-        break;
-    }
-
-  }
 
 
 
@@ -771,61 +488,26 @@ class LPiece extends Piece  {
   }
 
   setLayout() {
-    return 3;
-    // return Math.floor(Math.random() * 4);
-    // // let layoutNum = Math.floor(Math.random() * 4) + 1;
-    // // switch (layoutNum) {
-    // //   case 1:
-    // //     return 'h1';
-    // //   case 2:
-    // //     return 'v1';
-    // //   case 3:
-    // //     return 'h2';
-    // //   case 4:
-    // //     return 'v2';
-    // // }
+    return Math.floor(Math.random() * 4);
+
   }
+
   setPos() {
 
     this.rotationKeys = [
       [ [0,3], [-1,3], [-1,4], [-1,5] ],
-      [ [-2, 4], [-2,5], [-1,5], [0,5] ],
-      [ [0, 3], [0, 4], [0, 5], [-1, 5] ],
+      [ [-2,3], [-2,4], [-1,4], [0,4] ],
+      [ [-1,3], [-1, 4], [-1, 5], [-2, 5] ],
       [ [-2,4], [-1,4], [0, 4], [0, 5] ]
     ];
 
     this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-
     this.colorPos();
   }
 
-  moveDownOne() {
-    this.piecePos.forEach( (piecePo, idx) => {
 
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-      piecePo[0] += 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      this.colorPos();
-    });
 
-  }
 
-  rotate() {
-    this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-    });
-
-    let newPieceLayout = (this.pieceLayout + 1) % 4;
-    this.piecePos.forEach( (piecePo, idx) => {
-
-      piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
-      piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
-
-    });
-    this.pieceLayout = newPieceLayout;
-    this.colorPos();
-
-  }
 
 }
 
@@ -850,88 +532,12 @@ class OPiece extends Piece  {
   }
 
   setPos() {
-    this.piecePos = [ [0, 4], [0, 5] ];
+    this.piecePos = [ [0, 4], [-1, 4], [0, 5], [-1, 5] ];
     this.colorPos();
   }
 
-  moveDownOne() {
-    if (this.piecePos.length < 4) {
-      let oldTopPieces = JSON.parse(JSON.stringify(this.piecePos));
-      this.piecePos = oldTopPieces.concat(this.piecePos);
-      for(let i = 2; i < this.piecePos.length; i++) {
-        this.piecePos[i][0] += 1;
-        // let piecePo = this.piecePos[i];
-        $( `li[pos='${this.piecePos[i][0]},${this.piecePos[i][1]}']` ).css("background-color", this.color());
-      }
-    } else {
-      this.piecePos.forEach( (piecePo, idx) => {
-        if (idx < 2) {
-          $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        }
-        piecePo[0] += 1;
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-    }
-    // this.checkStop();
-  }
-
   rotate() {
-    if (this.pieceLayout === 'horizontal') {
-      this.piecePos.forEach( (piecePo, idx) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        switch (idx) {
-          case 0:
-            piecePo[0] -= 2;
-            piecePo[1] += 2;
-            // if ( $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static") === "true") {
-            //   $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            //   break;
-            // }
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 1:
-            piecePo[0] -= 1;
-            piecePo[1] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 2:
-            break;
-          case 3:
-            piecePo[0] += 1;
-            piecePo[1] -= 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-        }
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-      this.pieceLayout = 'vertical';
-    } else {
-      this.piecePos.forEach( (piecePo, idx) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-        switch (idx) {
-          case 0:
-            piecePo[0] += 2;
-            piecePo[1] -= 2;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 1:
-            piecePo[0] += 1;
-            piecePo[1] -= 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-          case 2:
-            break;
-          case 3:
-            piecePo[0] -= 1;
-            piecePo[1] += 1;
-            $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-            break;
-        }
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
-      });
-      this.pieceLayout = 'horizontal';
-
-    }
+    return;
   }
 
 }
@@ -952,6 +558,138 @@ $(document).one("keydown", function(e) {
     new Game;
   }
 });
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class SPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "orange";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-1,3], [-1,4], [-2,4], [-2,5] ],
+      [ [-1,4], [-2,4], [0,5], [-1,5] ],
+      [ [0,3], [0,4], [-1,4], [-1,5] ],
+      [ [-2,3], [-1,3], [-1,4], [0,4] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = SPiece;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class TPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "purple";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 4);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-1, 3], [-2,4], [-1,4], [-1,5] ],
+      [ [-1,4], [-2,4], [0,4], [-1,5] ],
+      [ [-1,3], [-1,4], [0,4], [-1,5] ],
+      [ [-1,3], [-2,4], [0,4], [-1, 4]]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = TPiece;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class ZPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "cyan";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-2,3], [-2,4], [-1,4], [-1,5] ],
+      [ [-1,4], [-2,5], [0,4], [-1,5] ],
+      [ [-1,3], [-1,4], [0,4], [0,5]],
+      [ [-1,3], [-2,4], [0,3], [-1,4]]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = ZPiece;
 
 
 /***/ })
