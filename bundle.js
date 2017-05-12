@@ -160,7 +160,7 @@ class Piece {
     });
   }
 
-  checkCompletesRow() {
+  completedRows() {
     // const clearRow = this.clearRow;
     const grid = this.grid;
     let completedRows = [];
@@ -174,7 +174,7 @@ class Piece {
           }
         });
         if (rowComplete) {
-          grid.clearRow(piecePo[0]);
+          // grid.clearRow(piecePo[0]);
           completedRows.push(piecePo[0]);
         }
       });
@@ -184,6 +184,9 @@ class Piece {
       return completedRows.indexOf(row) === index;
     });
 
+    return rowsToClear.sort( (a,b) => {
+      return a - b;
+    });
   }
 
   moveLeft() {
@@ -249,6 +252,13 @@ class Game {
   constructor() {
     this.grid = new Grid;
     this.startGame();
+    this.score = 0;
+    this.updateScore(0);
+  }
+
+  updateScore(factor) {
+    this.score += 100 * factor;
+    $( "#score" ).html(`${this.score}`);
   }
 
   startGame() {
@@ -266,23 +276,33 @@ class Game {
       if (currentPiece.checkStop()==="make static") {
         console.log('at bottom');
         currentPiece.makeStatic();
-        currentPiece.checkCompletesRow();
+        this.checkCompletesRow();
         clearInterval(this.dropInterval);
         this.resetKeyFunctions();
         this.startGame();
       }
       else if (currentPiece.checkStop()==="game over") {
+        debugger;
         console.log('GAME OVER');
-        currentPiece.checkCompletesRow();
+        this.checkCompletesRow();
         clearInterval(this.dropInterval);
       }
     }, 150);
   }
 
+  checkCompletesRow() {
+    if (this.currentPiece.completedRows().length > 0) {
+      this.updateScore(this.currentPiece.completedRows().length);
+      this.grid.clearRows(this.currentPiece.completedRows());
+    }
+  }
 
+  gameOver(){
+    $( '#message' ).html( 'GAME OVER');
+  }
 
   generatePiece() {
-    return new OPiece(this.grid);
+    return new IPiece(this.grid);
     let pieces = [IPiece, OPiece, JPiece, LPiece, SPiece, TPiece, ZPiece];
     let pieceNum = Math.floor(Math.random() * 6);
     return new pieces[pieceNum](this.grid);
@@ -362,6 +382,14 @@ class Grid {
     }
     return $row;
     // $grid.append($row);
+  }
+
+  clearRows(rows) {
+    // debugger;
+
+    rows.forEach( (row) => {
+      this.clearRow(row);
+    });
   }
 
   clearRow(row) {
