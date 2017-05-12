@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -107,20 +107,37 @@ class Piece {
   }
 
   rotate() {
-    this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
-    });
 
     let newPieceLayout = (this.pieceLayout + 1) % this.rotationKeys.length;
-    this.piecePos.forEach( (piecePo, idx) => {
 
-      piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
-      piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
+
+
+    if (this.validMove(newPieceLayout)) {
+      this.piecePos.forEach( (piecePo, idx) => {
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
+        piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
+      });
+
+
+
+      this.pieceLayout = newPieceLayout;
+      this.colorPos();
+    }
+
+
+  }
+
+  validMove(newPieceLayout) {
+
+
+    return this.piecePos.every( (piecePo, idx) => {
+      let newPiecePo = [ ( piecePo[0] + (this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0]) ),
+        ( piecePo[1] + (this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1]) ) ] ;
+        // debugger;
+      return !($( `li[pos='${newPiecePo}']` ).attr("static") === "true") && newPiecePo[1] >= 0 && newPiecePo[1] <= 9;
 
     });
-    this.pieceLayout = newPieceLayout;
-    this.colorPos();
-
   }
 
 
@@ -204,6 +221,8 @@ class Piece {
       piecePo[1] -= 1;
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
+
+    this.colorPos();
   }
 
   moveRight() {
@@ -220,6 +239,8 @@ class Piece {
       piecePo[1] += 1;
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
+
+    this.colorPos();
   }
 
   // dropPiece() {
@@ -243,7 +264,7 @@ const IPiece = __webpack_require__(3);
 const OPiece = __webpack_require__(6);
 const JPiece = __webpack_require__(4);
 const LPiece = __webpack_require__(5);
-const SPiece = __webpack_require__(8);
+const SPiece = __webpack_require__(7);
 const TPiece = __webpack_require__(9);
 const ZPiece = __webpack_require__(10);
 
@@ -272,22 +293,40 @@ class Game {
     let currentPiece = this.currentPiece;
     this.dropInterval = setInterval(() => {
       currentPiece.moveDownOne();
-      // debugger;
-      if (currentPiece.checkStop()==="make static") {
-        console.log('at bottom');
-        currentPiece.makeStatic();
-        this.checkCompletesRow();
-        clearInterval(this.dropInterval);
-        this.resetKeyFunctions();
-        this.startGame();
-      }
-      else if (currentPiece.checkStop()==="game over") {
-        debugger;
-        console.log('GAME OVER');
-        this.checkCompletesRow();
-        clearInterval(this.dropInterval);
-      }
+      this.checkStop();
+
+      // if (currentPiece.checkStop()==="make static") {
+      //   currentPiece.makeStatic();
+      //   this.checkCompletesRow();
+      //   clearInterval(this.dropInterval);
+      //   this.resetKeyFunctions();
+      //   this.startGame();
+      // }
+      // else if (currentPiece.checkStop()==="game over") {
+      //   debugger;
+      //   console.log('GAME OVER');
+      //   this.checkCompletesRow();
+      //   clearInterval(this.dropInterval);
+      // }
     }, 150);
+  }
+
+  checkStop() {
+    let currentPiece = this.currentPiece;
+    debugger;
+    if (currentPiece.checkStop()==="make static") {
+      currentPiece.makeStatic();
+      this.checkCompletesRow();
+      clearInterval(this.dropInterval);
+      this.resetKeyFunctions();
+      this.startGame();
+    }
+    else if (currentPiece.checkStop()==="game over") {
+      debugger;
+      console.log('GAME OVER');
+      this.checkCompletesRow();
+      clearInterval(this.dropInterval);
+    }
   }
 
   checkCompletesRow() {
@@ -310,20 +349,25 @@ class Game {
 
   loadKeyFunctions() {
     let currentPiece = this.currentPiece;
+    let checkStop = this.checkStop;
     $(document).on("keydown", function(e) {
       // e.preventDefault();
       switch (e.which) {
       case 37:
         currentPiece.moveLeft();
+        // checkStop();
         break;
       case 38:
         currentPiece.rotate();
+        // checkStop();
         break;
       case 39:
         currentPiece.moveRight();
+        // checkStop();
         break;
       }
     });
+    this.checkStop();
   }
 
   resetKeyFunctions() {
@@ -359,6 +403,7 @@ module.exports = Game;
 //   // addRow(rowIdx);
 //   $grid.append(addRow(rowIdx));
 // }
+
 
 class Grid {
 
@@ -577,21 +622,6 @@ module.exports = OPiece;
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Game = __webpack_require__ (1);
-
-$(document).one("keydown", function(e) {
-  // debugger;
-
-  if (e.which === 32) {
-    new Game;
-  }
-});
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
 const Piece = __webpack_require__(0);
 
 class SPiece extends Piece  {
@@ -630,6 +660,21 @@ class SPiece extends Piece  {
 }
 
 module.exports = SPiece;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Game = __webpack_require__ (1);
+
+$(document).one("keydown", function(e) {
+  // debugger;
+
+  if (e.which === 32) {
+    new Game;
+  }
+});
 
 
 /***/ }),
