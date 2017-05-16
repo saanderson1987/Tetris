@@ -98,7 +98,7 @@ class Piece {
   moveDownOne() {
     this.piecePos.forEach( (piecePo, idx) => {
 
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[0] += 1;
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
       this.colorPos();
@@ -114,7 +114,7 @@ class Piece {
 
     if (this.validMove(newPieceLayout)) {
       this.piecePos.forEach( (piecePo, idx) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
         piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
         piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
       });
@@ -134,7 +134,6 @@ class Piece {
     return this.piecePos.every( (piecePo, idx) => {
       let newPiecePo = [ ( piecePo[0] + (this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0]) ),
         ( piecePo[1] + (this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1]) ) ] ;
-        // debugger;
       return !($( `li[pos='${newPiecePo}']` ).attr("static") === "true") && newPiecePo[1] >= 0 && newPiecePo[1] <= 9;
 
     });
@@ -144,20 +143,35 @@ class Piece {
 
 
   checkStop() {
-
-
+    let gameOver = true;
     for (let i = 0; i < this.piecePos.length; i++) {
       let piecePo = this.piecePos[i];
       if (piecePo[0] === 19
         || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
       ){
-        if (piecePo[0] < 0) {
-          return "game over";
-        } else {
-          return "make static";
-        }
-      }
+        return "make static";
+      } else if (piecePo[0] === -1
+        && $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+      )
+        return "game over";
     }
+
+
+    //
+    // let gameOver = true;
+    // for (let i = 0; i < this.piecePos.length; i++) {
+    //   let piecePo = this.piecePos[i];
+    //   if (piecePo[0] === 19
+    //     || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+    //   ){
+    //     if (piecePo[0] < 0) {
+    //       return "game over";
+    //     } else {
+    //       return "make static";
+    //     }
+    //   }
+    // }
+
     // return this.piecePos.some( (piecePo) => {
     //   if (piecePo[0] === 19
     //     || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
@@ -217,7 +231,7 @@ class Piece {
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[1] -= 1;
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
@@ -235,7 +249,7 @@ class Piece {
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "white");
+      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[1] += 1;
       $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
@@ -259,7 +273,7 @@ module.exports = Piece;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Grid = __webpack_require__(2);
+// const Grid = require('./grid');
 const IPiece = __webpack_require__(3);
 const OPiece = __webpack_require__(6);
 const JPiece = __webpack_require__(4);
@@ -270,8 +284,9 @@ const ZPiece = __webpack_require__(10);
 
 class Game {
 
-  constructor() {
-    this.grid = new Grid;
+  constructor(grid) {
+    this.grid = grid;
+    // this.grid = new Grid;
     this.startGame();
     this.score = 0;
     this.updateScore(0);
@@ -303,7 +318,6 @@ class Game {
       //   this.startGame();
       // }
       // else if (currentPiece.checkStop()==="game over") {
-      //   debugger;
       //   console.log('GAME OVER');
       //   this.checkCompletesRow();
       //   clearInterval(this.dropInterval);
@@ -311,9 +325,8 @@ class Game {
     }, 150);
   }
 
-  checkStop() {
-    let currentPiece = this.currentPiece;
-    debugger;
+  checkStop(currentPiece = this.currentPiece) {
+    // let currentPiece = this.currentPiece
     if (currentPiece.checkStop()==="make static") {
       currentPiece.makeStatic();
       this.checkCompletesRow();
@@ -322,7 +335,6 @@ class Game {
       this.startGame();
     }
     else if (currentPiece.checkStop()==="game over") {
-      debugger;
       console.log('GAME OVER');
       this.checkCompletesRow();
       clearInterval(this.dropInterval);
@@ -341,33 +353,41 @@ class Game {
   }
 
   generatePiece() {
-    return new IPiece(this.grid);
+    // return new IPiece(this.grid);
     let pieces = [IPiece, OPiece, JPiece, LPiece, SPiece, TPiece, ZPiece];
     let pieceNum = Math.floor(Math.random() * 6);
-    return new pieces[pieceNum](this.grid);
+    let newPiece = new pieces[pieceNum](this.grid);
+
+    if (
+      newPiece.piecePos.every( (piecePo) => {
+        return $(`li[pos='${piecePo}']`).attr("static") !== true;
+      })
+    ) {
+      return newPiece;
+    } else {
+      return console.log ('GAME OVER');
+    }
   }
 
   loadKeyFunctions() {
     let currentPiece = this.currentPiece;
-    let checkStop = this.checkStop;
+    let checkStop = this.checkStop.bind(this);
     $(document).on("keydown", function(e) {
       // e.preventDefault();
       switch (e.which) {
       case 37:
         currentPiece.moveLeft();
-        // checkStop();
         break;
       case 38:
         currentPiece.rotate();
-        // checkStop();
         break;
       case 39:
         currentPiece.moveRight();
-        // checkStop();
         break;
       }
+      checkStop(currentPiece);
     });
-    this.checkStop();
+
   }
 
   resetKeyFunctions() {
@@ -430,7 +450,6 @@ class Grid {
   }
 
   clearRows(rows) {
-    // debugger;
 
     rows.forEach( (row) => {
       this.clearRow(row);
@@ -667,12 +686,13 @@ module.exports = SPiece;
 /***/ (function(module, exports, __webpack_require__) {
 
 const Game = __webpack_require__ (1);
+const Grid = __webpack_require__(2);
 
+
+const grid = new Grid;
 $(document).one("keydown", function(e) {
-  // debugger;
-
   if (e.which === 32) {
-    new Game;
+    new Game(grid);
   }
 });
 

@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports = {
-  entry: './lib/tetris.js',
+  entry: './lib/js/tetris.js',
   output: {
     filename: 'bundle.js',
   },

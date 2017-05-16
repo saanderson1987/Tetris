@@ -1,0 +1,76 @@
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav,  {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  font-size: inherit;
+  list-style: none;
+  text-decoration: inherit;
+}
+
+@font-face {
+    font-family: 'Tetris1';
+    src:url('../fonts/tetris/Tetris1.ttf.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+  text-align: center;
+  /*background-image: url('https://s-media-cache-ak0.pinimg.com/originals/19/16/8e/19168eb68226a77cd4bd02e14c79345a.png');*/
+  /*background-image: url('https://www.extremetech.com/wp-content/uploads/2013/07/vlventarones24wb3.jpg');*/
+  background-image: url('http://img11.deviantart.net/7f76/i/2015/104/b/c/vyoletz_nebula_by_starkiteckt-d8815bu.jpg');
+  /*background-size: contain;*/
+  /*background-repeat: no-repeat;*/
+  color: white;
+
+
+}
+
+h1 {
+  font-family: 'Tetris1', sans-serif;
+  font-size: 40px;
+}
+
+p {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.border {
+  margin-top: 45px;
+  /*background-color: red;
+  border-radius: 10px;
+  width: 270px;
+  padding: 10px 0px;
+  height: auto;
+  overflow: auto;
+  margin: auto;*/
+}
+
+#grid {
+  margin: 0 auto;
+  width: 250px;
+  /*border: 10px solid black;*/
+  background-color: transparent;
+}
+
+.row {
+  list-style: none;
+  /*display: flex;*/
+  float: left;
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  /*border-top: 1px solid gray;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;*/
+}
+
+.square {
+  float: left;
+  outline: 1px solid gray;
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+}
