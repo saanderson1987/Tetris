@@ -8,14 +8,22 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.js"></script>
   <body>
     <h1>TETRIS</h1>
-    <p>Move piece left and right with the left and right arrow keys. <br/> Press up arrow to rotate piece.
-    <p>Press spacebar to start game.</p>
-    <p>SCORE: <span id="score">0</span><p>
-    <div class="border">
-      <div id="grid">
+    <div class="main">
+      <div class="directions">
+        <p>Move piece left and right with the left and right arrow keys. <br/> Press up arrow to rotate piece.</p>
+        <p class= "start-game">Press spacebar to start game.</p>
+      </div>
+      <div class="game">
+        <p>SCORE: <span id="score">0</span><p>
+          <div class="border">
+            <div id="grid">
+            </div>
+          </div>
       </div>
     </div>
-    <div id="message"></div>
+    <div class="game-over">
+      <div>Game Over! <br/> Press spacebar to play again </div>
+    </div>
     <script src="bundle.js"></script>
   </body>
 

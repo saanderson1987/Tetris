@@ -338,9 +338,7 @@ class Game {
       this.startGame();
     }
     else if (currentPiece.checkStop()==="game over") {
-      console.log('GAME OVER');
-      this.checkCompletesRow();
-      clearInterval(this.dropInterval);
+      this.gameOver();
     }
   }
 
@@ -351,8 +349,30 @@ class Game {
     }
   }
 
-  gameOver(){
-    $( '#message' ).html( 'GAME OVER');
+  gameOver () {
+    console.log('GAME OVER');
+    this.checkCompletesRow();
+    clearInterval(this.dropInterval);
+    this.resetKeyFunctions();
+    $('.game-over').show();
+    let restartGame = this.restartGame.bind(this);
+    $(document).one("keydown", function(e) {
+      if (e.which === 32) {
+        restartGame();
+
+      }
+    });
+
+  }
+
+  restartGame() {
+    $('.game-over').hide();
+    for(let i = 0; i < 20; i++) {
+      this.grid.clearRow(i);
+    }
+    this.score = 0;
+    this.updateScore(0);
+    this.startGame();
   }
 
   generatePiece() {
@@ -367,8 +387,6 @@ class Game {
       })
     ) {
       return newPiece;
-    } else {
-      return console.log ('GAME OVER');
     }
   }
 
@@ -692,7 +710,7 @@ const Game = __webpack_require__ (1);
 const Grid = __webpack_require__(2);
 
 
-const grid = new Grid;
+let grid = new Grid;
 $(document).one("keydown", function(e) {
   if (e.which === 32) {
     new Game(grid);
