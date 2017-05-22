@@ -7,19 +7,22 @@
   </head>
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.js"></script>
   <body>
-    <div class="game-over">
-      <div>
-        <p>Game Over! <br/> Press spacebar to play again </p> </div>
-    </div>
+
     <h1>TETRIS</h1>
     <div class="main">
-      <div class="directions">
-        <p>Move piece left and right with the left and right arrow keys. <br/> Press up arrow to rotate piece.</p>
-        <p class= "start-game">Press spacebar to start game.</p>
-      </div>
       <div class="game">
         <p>SCORE: <span id="score">0</span><p>
           <div class="border">
+            <div class="display-box" id="directions">
+              <div class="display-box-text">
+                <p>Move piece left and right with the left and right arrow keys. <br/> Press up arrow to rotate piece.</p>
+                <p class= "start-game">Press spacebar to start game.</p>
+              </div>
+            </div>
+            <div class="display-box" id="game-over">
+              <div class="display-box-text-container">
+                <p>Game Over! <br/> Press spacebar to play again </p> </div>
+            </div>
             <div id="grid">
             </div>
           </div>

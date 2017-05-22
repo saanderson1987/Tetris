@@ -36,7 +36,7 @@ h1 {
 
 p {
   font-family: 'Source Sans Pro', sans-serif;
-  font-size: 12px;
+  font-size: 18px;
   margin: 5px;
 }
 .main {
@@ -44,38 +44,24 @@ p {
 
 }
 
-.directions {
-  /*width: 200px;*/
-}
-
 .border {
   margin-top: 10px;
-  /*background-color: red;
-  border-radius: 10px;
-  width: 270px;
-  padding: 10px 0px;
-  height: auto;
-  overflow: auto;
-  margin: auto;*/
+  position: relative;
 }
 
 #grid {
   margin: 0 auto;
   width: 250px;
-  /*border: 10px solid black;*/
   background-color: transparent;
 }
 
 .row {
   list-style: none;
-  /*display: flex;*/
   float: left;
   margin: 0;
   padding: 0;
   width: 250px;
-  /*border-top: 1px solid gray;
-  border-left: 1px solid gray;
-  border-right: 1px solid gray;*/
+
 }
 
 .square {
@@ -86,34 +72,25 @@ p {
   background-color: transparent;
 }
 
-.game-over {
-  display: none;
+.display-box {
   font-family: 'Source Sans Pro', sans-serif;
   position: absolute;
-  /*margin: auto;*/
   left: 50%;
-  top: 20%;
-  width: 400px;
-  margin-left: -200px;
-  height: 120px;
-  /*margin-top: -80px;*/
+  top: 40px;
+  width: 360px;
+  margin-left: -180px;
   border-radius: 8px;
-  background-color: rgba(88, 38, 79, 0.5);
-  /*padding: 20px;*/
-  box-sizing: border-box;
+  padding: 20px;
+  background-color: rgba(88, 38, 79, 0.7);
 }
 
-.game-over div {
+#game-over {
+  display: none;
+  /*height: 120px;*/
+}
+
+.display-box-text-container {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
-  /*top: 50%;*/
-  /*text-align: center;*/
-}
-
-.game-over p {
-  text-align: center;
-  font-size: 16px;
 }

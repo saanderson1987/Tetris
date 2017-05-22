@@ -354,7 +354,7 @@ class Game {
     this.checkCompletesRow();
     clearInterval(this.dropInterval);
     this.resetKeyFunctions();
-    $('.game-over').show();
+    $('#game-over').show();
     let restartGame = this.restartGame.bind(this);
     $(document).one("keydown", function(e) {
       if (e.which === 32) {
@@ -366,7 +366,7 @@ class Game {
   }
 
   restartGame() {
-    $('.game-over').hide();
+    $('#game-over').hide();
     for(let i = 0; i < 20; i++) {
       this.grid.clearRow(i);
     }
@@ -713,7 +713,9 @@ const Grid = __webpack_require__(2);
 let grid = new Grid;
 $(document).one("keydown", function(e) {
   if (e.which === 32) {
+    $('#directions').toggle();
     new Game(grid);
+
   }
 });
 
