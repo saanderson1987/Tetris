@@ -18,11 +18,8 @@ html, body, div, span, h1, h2, h3, h4, h5, h6, p,  ul, li {
 
 body {
   text-align: center;
-  /*background-image: url('https://s-media-cache-ak0.pinimg.com/originals/19/16/8e/19168eb68226a77cd4bd02e14c79345a.png');*/
-  /*background-image: url('https://www.extremetech.com/wp-content/uploads/2013/07/vlventarones24wb3.jpg');*/
   background-image: url('http://img11.deviantart.net/7f76/i/2015/104/b/c/vyoletz_nebula_by_starkiteckt-d8815bu.jpg');
-  /*background-size: contain;*/
-  /*background-repeat: no-repeat;*/
+
   color: white;
 
 
@@ -38,10 +35,6 @@ p {
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 18px;
   margin: 5px;
-}
-.main {
-  /*display: flex;*/
-
 }
 
 .border {
@@ -86,7 +79,6 @@ p {
 
 #game-over {
   display: none;
-  /*height: 120px;*/
 }
 
 .display-box-text-container {
