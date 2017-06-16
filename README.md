@@ -1,6 +1,6 @@
 # Tetris
 
-[Play here] (https://saanderson1987.github.io/Tetris/)
+[Play here](https://saanderson1987.github.io/Tetris/)
 
 My take on the classic 80's arcade game.
 
@@ -15,6 +15,6 @@ Press space bar to begin.
 
 ## Technical Implementation
 
-I used HTML, CSS, JavaScript, and JQuery. To create the grid, I made a series of <ul> elements to represent the rows, and <li> elements for the squares. Using CSS, I styled the <li>s to lie next to each other and added a square border around them. Each square is given a 'pos' attribute that marks it vertical and horizontal position on the grid.
+I used HTML, CSS, JavaScript, and JQuery. To create the grid, I made a series of `<ul>` elements to represent the rows, and `<li>` elements for the squares. Using CSS, I styled the `<li>`s to lie next to each other and added a square border around them. Each square is given a 'pos' attribute that marks it vertical and horizontal position on the grid.
 
-Pieces are created by giving a background color to the <li> squares and a custom attribute 'static' that is marked true if the piece is not moving. Pieces are dropped using JavaScript's setInterval function: at every interval, the piece's position moves down one by removing the background color of the previous position and coloring the new position.
+Pieces are created by giving a background color to the `<li>` squares and a custom attribute 'static' that is marked true if the piece is not moving. Pieces are dropped using JavaScript's setInterval function: at every interval, the piece's position moves down one by removing the background color of the previous position and coloring the new position.
