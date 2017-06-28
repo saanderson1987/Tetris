@@ -42,10 +42,22 @@ p {
   position: relative;
 }
 
-#grid {
+.grids {
   margin: 0 auto;
   width: 250px;
+  position: relative;
+}
+
+#mainGrid {
+  margin: 0 auto;
+  /*width: 250px;*/
   background-color: transparent;
+}
+
+#nextPieceGrid {
+  position: absolute;
+
+  right: -200px;
 }
 
 .row {
@@ -53,7 +65,7 @@ p {
   float: left;
   margin: 0;
   padding: 0;
-  width: 250px;
+  /*width: 250px;*/
 
 }
 
@@ -75,6 +87,7 @@ p {
   border-radius: 8px;
   padding: 20px;
   background-color: rgba(88, 38, 79, 0.7);
+  z-index: 1;
 }
 
 #game-over {

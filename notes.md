@@ -9,8 +9,5 @@ jsperf.com -- JS performance benchmarks -- looping
 FOR is faster than FOREACH , maybe use that to avoid 'flashes'
 
 
-ANIMATE -- apparently is 'faster' than SETINTERVAL
-
-
 generate piece above row 0
 in checkStop, if every piecePo is above row -2, end game;

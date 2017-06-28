@@ -70,9 +70,6 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-
-
-
 class Piece {
 
   constructor(grid) {
@@ -91,16 +88,16 @@ class Piece {
   colorPos() {
     this.piecePos.forEach( (piecePo) => {
 
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
   }
 
   moveDownOne() {
     this.piecePos.forEach( (piecePo, idx) => {
 
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[0] += 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
       this.colorPos();
     });
 
@@ -114,7 +111,7 @@ class Piece {
 
     if (this.validMove(newPieceLayout)) {
       this.piecePos.forEach( (piecePo, idx) => {
-        $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+        $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
         piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
         piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
       });
@@ -134,7 +131,7 @@ class Piece {
     return this.piecePos.every( (piecePo, idx) => {
       let newPiecePo = [ ( piecePo[0] + (this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0]) ),
         ( piecePo[1] + (this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1]) ) ] ;
-      return !($( `li[pos='${newPiecePo}']` ).attr("static") === "true") && newPiecePo[1] >= 0 && newPiecePo[1] <= 9;
+      return !($( `#mainGrid li[pos='${newPiecePo}']` ).attr("static") === "true") && newPiecePo[1] >= 0 && newPiecePo[1] <= 9;
 
     });
   }
@@ -147,55 +144,27 @@ class Piece {
     for (let i = 0; i < this.piecePos.length; i++) {
       let piecePo = this.piecePos[i];
       if (piecePo[0] === -1
-        && $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+        && $( `#mainGrid li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
       ){
         console.log('game over man');
         return "game over";
       }
       else if (piecePo[0] === 19
-        || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
+        || $( `#mainGrid li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
       ){
         return "make static";
       }
     }
 
-
-    //
-    // let gameOver = true;
-    // for (let i = 0; i < this.piecePos.length; i++) {
-    //   let piecePo = this.piecePos[i];
-    //   if (piecePo[0] === 19
-    //     || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
-    //   ){
-    //     if (piecePo[0] < 0) {
-    //       return "game over";
-    //     } else {
-    //       return "make static";
-    //     }
-    //   }
-    // }
-
-    // return this.piecePos.some( (piecePo) => {
-    //   if (piecePo[0] === 19
-    //     || $( `li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
-    //   ){
-    //     if (piecePo[0] < 0) {
-    //       return "game over";
-    //     } else {
-    //       return "make static";
-    //     }
-    //   }
-    // });
   }
 
   makeStatic() {
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).attr("static", "true");
     });
   }
 
   completedRows() {
-    // const clearRow = this.clearRow;
     const grid = this.grid;
     let completedRows = [];
 
@@ -208,7 +177,6 @@ class Piece {
           }
         });
         if (rowComplete) {
-          // grid.clearRow(piecePo[0]);
           completedRows.push(piecePo[0]);
         }
       });
@@ -228,15 +196,15 @@ class Piece {
     let leftPiece = this.piecePos[0];
     if (
       this.piecePos[0][1] === 0
-      || $( `li[pos='${leftPiece[0]},${leftPiece[1]-1}']` ).attr("static") === "true"
+      || $( `#mainGrid li[pos='${leftPiece[0]},${leftPiece[1]-1}']` ).attr("static") === "true"
     ){
       return;
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[1] -= 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
 
     this.colorPos();
@@ -246,27 +214,19 @@ class Piece {
     let rightPiece = this.piecePos[this.piecePos.length - 1];
     if (
       rightPiece[1] === 9
-      || $( `li[pos='${rightPiece[0]},${rightPiece[1]+1}']` ).attr("static") === "true"
+      || $( `#mainGrid li[pos='${rightPiece[0]},${rightPiece[1]+1}']` ).attr("static") === "true"
     ) {
       return;
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
       piecePo[1] += 1;
-      $( `li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
     });
 
     this.colorPos();
   }
-
-  // dropPiece() {
-  //   this.dropInterval = setInterval(() => { this.moveDownOne(); }, 150);
-  // }
-
-
-
-
 }
 
 module.exports = Piece;
@@ -276,7 +236,6 @@ module.exports = Piece;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// const Grid = require('./grid');
 const IPiece = __webpack_require__(3);
 const OPiece = __webpack_require__(6);
 const JPiece = __webpack_require__(4);
@@ -289,10 +248,19 @@ class Game {
 
   constructor(grid) {
     this.grid = grid;
-    // this.grid = new Grid;
+    this.makePieces();
     this.startGame();
     this.score = 0;
     this.updateScore(0);
+  }
+
+  makePieces() {
+    this.pieces = [];
+
+    for (let i = 0; i < 2; i++) {
+      this.pieces.push(this.generatePiece());
+    }
+
   }
 
   updateScore(factor) {
@@ -301,35 +269,41 @@ class Game {
   }
 
   startGame() {
-    this.currentPiece = this.generatePiece();
+    this.setCurrentPiece();
     this.loadKeyFunctions();
+    this.displayNextPiece();
     this.dropPiece();
+  }
 
+  displayNextPiece() {
+    $( `#nextPieceGrid li`).css("background-color", "transparent");
+    let nextPiece = this.pieces[0];
+    let nextPieceDisplayed = [];
+
+    nextPiece.piecePos.forEach ( (piecePo) => {
+      nextPieceDisplayed.push( [(piecePo[0] + 5), (piecePo[1] - 3)] );
+    });
+
+    nextPieceDisplayed.forEach( (piecePo) => {
+      $( `#nextPieceGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", nextPiece.color());
+    });
+  }
+
+  setCurrentPiece() {
+    this.currentPiece = this.pieces.shift();
+    this.pieces.push(this.generatePiece());
   }
 
   dropPiece() {
+    console.log(this.pieces);
     let currentPiece = this.currentPiece;
     this.dropInterval = setInterval(() => {
       currentPiece.moveDownOne();
       this.checkStop();
-
-      // if (currentPiece.checkStop()==="make static") {
-      //   currentPiece.makeStatic();
-      //   this.checkCompletesRow();
-      //   clearInterval(this.dropInterval);
-      //   this.resetKeyFunctions();
-      //   this.startGame();
-      // }
-      // else if (currentPiece.checkStop()==="game over") {
-      //   console.log('GAME OVER');
-      //   this.checkCompletesRow();
-      //   clearInterval(this.dropInterval);
-      // }
     }, 150);
   }
 
   checkStop(currentPiece = this.currentPiece) {
-    // let currentPiece = this.currentPiece
     if (currentPiece.checkStop()==="make static") {
       currentPiece.makeStatic();
       this.checkCompletesRow();
@@ -376,14 +350,13 @@ class Game {
   }
 
   generatePiece() {
-    // return new IPiece(this.grid);
     let pieces = [IPiece, OPiece, JPiece, LPiece, SPiece, TPiece, ZPiece];
     let pieceNum = Math.floor(Math.random() * 6);
     let newPiece = new pieces[pieceNum](this.grid);
 
     if (
       newPiece.piecePos.every( (piecePo) => {
-        return $(`li[pos='${piecePo}']`).attr("static") !== true;
+        return $(`#mainGrid li[pos='${piecePo}']`).attr("static") !== true;
       })
     ) {
       return newPiece;
@@ -393,9 +366,11 @@ class Game {
   loadKeyFunctions() {
     let currentPiece = this.currentPiece;
     let checkStop = this.checkStop.bind(this);
+    let pause = this.pause.bind(this);
     $(document).on("keydown", function(e) {
-      // e.preventDefault();
       switch (e.which) {
+      case 32:
+        pause();
       case 37:
         currentPiece.moveLeft();
         break;
@@ -404,7 +379,7 @@ class Game {
         break;
       case 39:
         currentPiece.moveRight();
-        break;
+      break;
       }
       checkStop(currentPiece);
     });
@@ -415,6 +390,23 @@ class Game {
     $(document).off("keydown");
   }
 
+  pause() {
+    clearInterval(this.dropInterval);
+    this.resetKeyFunctions();
+    let unpause = this.unpause.bind(this);
+    $(document).on("keydown", function(e) {
+      switch (e.which) {
+      case 32:
+        unpause();
+      }
+    });
+
+  }
+
+  unpause() {
+    this.loadKeyFunctions();
+    this.dropPiece();
+  }
 
 }
 
@@ -426,48 +418,33 @@ module.exports = Game;
 /* 2 */
 /***/ (function(module, exports) {
 
-//
-// const $grid = $("#grid");
-//
-// const addRow = (rowIdx) => {
-//   const $row = $("<ul>").addClass("row").attr("row", rowIdx);
-//   for(let colIdx= 0; colIdx < 10; colIdx++) {
-//     const $square = $("<li>").addClass("square").attr("pos", [rowIdx, colIdx] );
-//     $row.append($square);
-//   }
-//   return $row;
-//   // $grid.append($row);
-// };
-//
-//
-// for(let rowIdx = 0; rowIdx< 20; rowIdx++) {
-//   // addRow(rowIdx);
-//   $grid.append(addRow(rowIdx));
-// }
-
-
 class Grid {
 
-  constructor() {
-    this.grid = $("#grid");
+  constructor(grid, height, width) {
+    this.grid = grid;
+    this.height = height;
+    this.width = width;
+    this.setDimensions();
     this.create();
   }
 
+  setDimensions() {
+    this.grid.width(this.width*25);
+  }
+
   create() {
-    for(let rowIdx = 0; rowIdx< 20; rowIdx++) {
-      // addRow(rowIdx);
+    for(let rowIdx = 0; rowIdx< this.height; rowIdx++) {
       this.grid.append(this.addRow(rowIdx));
     }
   }
 
   addRow(rowIdx) {
     const $row = $("<ul>").addClass("row").attr("row", rowIdx);
-    for(let colIdx= 0; colIdx < 10; colIdx++) {
+    for(let colIdx= 0; colIdx < this.width; colIdx++) {
       const $square = $("<li>").addClass("square").attr("pos", [rowIdx, colIdx] );
       $row.append($square);
     }
     return $row;
-    // $grid.append($row);
   }
 
   clearRows(rows) {
@@ -710,11 +687,12 @@ const Game = __webpack_require__ (1);
 const Grid = __webpack_require__(2);
 
 
-let grid = new Grid;
+let mainGrid = new Grid($("#mainGrid"), 20, 10);
+let nextPieceGrid = new Grid($("#nextPieceGrid"), 4, 4);
 $(document).one("keydown", function(e) {
   if (e.which === 32) {
     $('#directions').toggle();
-    new Game(grid);
+    new Game(mainGrid);
 
   }
 });
