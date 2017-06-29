@@ -146,7 +146,6 @@ class Piece {
       if (piecePo[0] === -1
         && $( `#mainGrid li[pos='${piecePo[0]+1},${piecePo[1]}']` ).attr("static") === "true"
       ){
-        console.log('game over man');
         return "game over";
       }
       else if (piecePo[0] === 19
@@ -294,13 +293,12 @@ class Game {
     this.pieces.push(this.generatePiece());
   }
 
-  dropPiece() {
-    console.log(this.pieces);
+  dropPiece(time = 150) {
     let currentPiece = this.currentPiece;
     this.dropInterval = setInterval(() => {
       currentPiece.moveDownOne();
       this.checkStop();
-    }, 150);
+    }, time);
   }
 
   checkStop(currentPiece = this.currentPiece) {
@@ -324,7 +322,6 @@ class Game {
   }
 
   gameOver () {
-    console.log('GAME OVER');
     this.checkCompletesRow();
     clearInterval(this.dropInterval);
     this.resetKeyFunctions();
@@ -367,7 +364,14 @@ class Game {
     let currentPiece = this.currentPiece;
     let checkStop = this.checkStop.bind(this);
     let pause = this.pause.bind(this);
+    let changeSpeed = this.changeSpeed.bind(this);
+    let downArrowDown = false;
     $(document).on("keydown", function(e) {
+
+      if (downArrowDown === true) {
+        return;
+      }
+
       switch (e.which) {
       case 32:
         pause();
@@ -380,9 +384,20 @@ class Game {
         break;
       case 39:
         currentPiece.moveRight();
-      break;
+        break;
+      case 40:
+        downArrowDown = true;
+        changeSpeed(75);
+        break;
       }
       checkStop(currentPiece);
+    });
+
+    $(document).on("keyup", function(e) {
+      if (e.which === 40) {
+        downArrowDown = false;
+        changeSpeed(150);
+      }
     });
 
   }
@@ -392,7 +407,6 @@ class Game {
   }
 
   pause() {
-    debugger;
     clearInterval(this.dropInterval);
     this.resetKeyFunctions();
     let unpause = this.unpause.bind(this);
@@ -410,6 +424,11 @@ class Game {
     this.resetKeyFunctions();
     this.loadKeyFunctions();
     this.dropPiece();
+  }
+
+  changeSpeed(speed) {
+    clearInterval(this.dropInterval);
+    this.dropPiece(speed);
   }
 
 }
