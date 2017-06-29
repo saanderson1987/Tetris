@@ -371,6 +371,7 @@ class Game {
       switch (e.which) {
       case 32:
         pause();
+        break;
       case 37:
         currentPiece.moveLeft();
         break;
@@ -391,6 +392,7 @@ class Game {
   }
 
   pause() {
+    debugger;
     clearInterval(this.dropInterval);
     this.resetKeyFunctions();
     let unpause = this.unpause.bind(this);
@@ -398,12 +400,14 @@ class Game {
       switch (e.which) {
       case 32:
         unpause();
+        break;
       }
     });
 
   }
 
   unpause() {
+    this.resetKeyFunctions();
     this.loadKeyFunctions();
     this.dropPiece();
   }
