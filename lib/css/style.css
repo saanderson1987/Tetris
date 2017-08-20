@@ -1,3 +1,14 @@
+:root {
+  --grid-border: 1px solid #3e3e3e;
+}
+
+@font-face {
+  font-family: 'Tetris1';
+  src:url('../fonts/tetris/Tetris1.ttf.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html, body, div, span, h1, h2, h3, h4, h5, h6, p,  ul, li {
   margin: 0;
   padding: 0;
@@ -22,17 +33,6 @@ p {
   margin-bottom: 10px;
 }
 
-:root {
-  --grid-border: 1px solid #3e3e3e;
-}
-
-@font-face {
-  font-family: 'Tetris1';
-  src:url('../fonts/tetris/Tetris1.ttf.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
 body {
   height: 100%;
   text-align: center;
@@ -40,7 +40,7 @@ body {
   background-color: black;
 }
 
-.grids-container {
+.game {
   position: relative;
   background-color: black;
   background-image: url('../images/vyoletz_nebula.jpg');
@@ -73,7 +73,6 @@ body {
   float: left;
   margin: 0;
   padding: 0;
-  /*width: 250px;*/
 }
 
 .square {
@@ -113,9 +112,3 @@ body {
 #paused {
   display: none;
 }
-
-/*.display-box-text-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}*/

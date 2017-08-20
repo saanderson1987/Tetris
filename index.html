@@ -1,51 +1,45 @@
 <html>
+
   <head lang="en">
     <meta charset="utf-8">
     <title>Tetris</title>
     <link rel="stylesheet" href="lib/css/style.css"/>
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin:100,300,400,600" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Arbutus+Slab" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin:100,300" rel="stylesheet">
   </head>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.js"></script>
-  <body>
 
-    <div class="main">
-      <div class="grids-container">
-        <h1>TETRIS</h1>
-        <div class="grids">
-          <div>
-            <p>SCORE: <span id="score">0</span></p>
-            <div id="mainGrid"></div>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.js"></script>
+
+  <body>
+    <div class="game">
+      <h1>TETRIS</h1>
+      <div class="grids">
+        <div>
+          <p>SCORE: <span id="score">0</span></p>
+          <div id="mainGrid"></div>
+        </div>
+        <div class="next-piece-grid-container">
+          <p>NEXT PIECE:</p>
+          <div id="nextPieceGrid">
           </div>
-          <div class="next-piece-grid-container">
-            <p>NEXT PIECE:</p>
-            <div id="nextPieceGrid">
-            </div>
-          </div>
-        </div>
-        <div class="display-box" id="directions">
-          <p>Use the arrow keys as controls:</p>
-          <p>&larr; Move piece left</p>
-          <p>&rarr; Move piece right</p>
-          <p>&uarr; Rotate piece.</p>
-          <p>&darr; Speed up drop</p>
-          <p>Press [space] to start game!</p>
-          <!-- <p>Move piece left and right with the left and right arrow keys.</p>
-          <p>Press up arrow to rotate piece.</p>
-          <p>Press spacebar to start game.</p> -->
-        </div>
-        <div class="display-box" id="paused">
-          <p>PAUSED</p>
-          <p>Press spacebar to resume.</p>
-        </div>
-        <div class="display-box" id="game-over">
-          <p>Game Over!</p>
-          <p>Press spacebar to play again</p>
         </div>
       </div>
+      <div class="display-box" id="directions">
+        <p>Use the arrow keys as controls:</p>
+        <p>&larr; Move piece left</p>
+        <p>&rarr; Move piece right</p>
+        <p>&uarr; Rotate piece</p>
+        <p>&darr; Speed up drop</p>
+        <p>Press [space] to start game!</p>
+      </div>
+      <div class="display-box" id="paused">
+        <p>PAUSED</p>
+        <p>Press [space] to resume.</p>
+      </div>
+      <div class="display-box" id="game-over">
+        <p>Game Over!</p>
+        <p>Press spacebar to play again</p>
+      </div>
     </div>
-
     <script src="bundle.js"></script>
   </body>
 
