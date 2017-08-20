@@ -9,55 +9,63 @@ html, body, div, span, h1, h2, h3, h4, h5, h6, p,  ul, li {
   text-decoration: inherit;
 }
 
-@font-face {
-    font-family: 'Tetris1';
-    src:url('../fonts/tetris/Tetris1.ttf.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-body {
-  text-align: center;
-  background-image: url('http://img11.deviantart.net/7f76/i/2015/104/b/c/vyoletz_nebula_by_starkiteckt-d8815bu.jpg');
-
-  color: white;
-
-
-}
-
 h1 {
   font-family: 'Tetris1', sans-serif;
   font-size: 40px;
-  margin: 5px;
+  padding: 5px;
 }
 
 p {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 300;
   font-size: 18px;
-  margin: 5px;
+  margin-bottom: 10px;
 }
 
-.border {
-  margin-top: 10px;
+:root {
+  --grid-border: 1px solid #3e3e3e;
+}
+
+@font-face {
+  font-family: 'Tetris1';
+  src:url('../fonts/tetris/Tetris1.ttf.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  height: 100%;
+  text-align: center;
+  color: white;
+  background-color: black;
+}
+
+.grids-container {
   position: relative;
+  background-color: black;
+  background-image: url('../images/vyoletz_nebula.jpg');
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 40px 40px black inset
 }
 
 .grids {
   margin: 0 auto;
-  width: 250px;
+  padding: 10px 20px 30px;
+  width: 400px;
   position: relative;
+  display: flex;
+  justify-content: space-between;
 }
 
 #mainGrid {
   margin: 0 auto;
-  /*width: 250px;*/
+  margin-top: 20px;
   background-color: transparent;
 }
 
-#nextPieceGrid {
-  position: absolute;
-
-  right: -200px;
+.next-piece-grid-container {
+  margin-top: 41px;
 }
 
 .row {
@@ -66,22 +74,30 @@ p {
   margin: 0;
   padding: 0;
   /*width: 250px;*/
-
 }
 
 .square {
   float: left;
-  outline: 1px solid gray;
+  border-bottom: var(--grid-border);
+  border-right: var(--grid-border);
   width: 25px;
   height: 25px;
   background-color: transparent;
+  box-sizing: border-box;
+}
+
+.square:first-of-type {
+  border-left: var(--grid-border);
+}
+
+.row:first-of-type .square {
+  border-top: var(--grid-border);
 }
 
 .display-box {
-  font-family: 'Source Sans Pro', sans-serif;
   position: absolute;
   left: 50%;
-  top: 40px;
+  top: 40%;
   width: 360px;
   margin-left: -180px;
   border-radius: 8px;
@@ -94,8 +110,12 @@ p {
   display: none;
 }
 
-.display-box-text-container {
+#paused {
+  display: none;
+}
+
+/*.display-box-text-container {
   display: flex;
   justify-content: center;
   flex-direction: column;
-}
+}*/

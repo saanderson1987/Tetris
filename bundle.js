@@ -88,16 +88,16 @@ class Piece {
   colorPos() {
     this.piecePos.forEach( (piecePo) => {
 
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", this.color());
     });
   }
 
   moveDownOne() {
     this.piecePos.forEach( (piecePo, idx) => {
 
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", "transparent");
       piecePo[0] += 1;
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", this.color());
       this.colorPos();
     });
 
@@ -111,7 +111,7 @@ class Piece {
 
     if (this.validMove(newPieceLayout)) {
       this.piecePos.forEach( (piecePo, idx) => {
-        $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+        $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", "transparent");
         piecePo[0] += this.rotationKeys[newPieceLayout][idx][0] - this.rotationKeys[this.pieceLayout][idx][0];
         piecePo[1] += this.rotationKeys[newPieceLayout][idx][1] - this.rotationKeys[this.pieceLayout][idx][1];
       });
@@ -201,9 +201,9 @@ class Piece {
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", "transparent");
       piecePo[1] -= 1;
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", this.color());
     });
 
     this.colorPos();
@@ -219,9 +219,9 @@ class Piece {
     }
 
     this.piecePos.forEach( (piecePo) => {
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", "transparent");
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", "transparent");
       piecePo[1] += 1;
-      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", this.color());
+      $( `#mainGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", this.color());
     });
 
     this.colorPos();
@@ -410,6 +410,7 @@ class Game {
     clearInterval(this.dropInterval);
     this.resetKeyFunctions();
     let unpause = this.unpause.bind(this);
+    $(`#paused`).toggle();
     $(document).on("keydown", function(e) {
       switch (e.which) {
       case 32:
@@ -423,6 +424,7 @@ class Game {
   unpause() {
     this.resetKeyFunctions();
     this.loadKeyFunctions();
+    $(`#paused`).toggle();
     this.dropPiece();
   }
 
@@ -513,7 +515,7 @@ class IPiece extends Piece  {
   }
 
   color() {
-    return "green";
+    return "radial-gradient(#4eab4e, #051905)";
   }
 
   setLayout() {
@@ -554,7 +556,7 @@ class JPiece extends Piece  {
   }
 
   color() {
-    return "red";
+    return "radial-gradient(#fb544e, #440704)";
   }
 
   setLayout() {
@@ -597,7 +599,7 @@ class LPiece extends Piece  {
   }
 
   color() {
-    return "yellow";
+    return "radial-gradient(#fbfb57, #737335)";
   }
 
   setLayout() {
@@ -641,7 +643,7 @@ class OPiece extends Piece  {
   }
 
   color() {
-    return "blue";
+    return "radial-gradient(#6d6dff, #282871)";
   }
 
   setPos() {
@@ -672,7 +674,7 @@ class SPiece extends Piece  {
   }
 
   color() {
-    return "orange";
+    return "radial-gradient(#e8ac3f, #543f17)";
   }
 
   setLayout() {
@@ -735,7 +737,7 @@ class TPiece extends Piece  {
   }
 
   color() {
-    return "purple";
+    return "radial-gradient(#a259a2, #191719)";
   }
 
   setLayout() {
