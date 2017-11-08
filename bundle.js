@@ -33,9 +33,6 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -63,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -235,13 +232,32 @@ module.exports = Piece;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+const Game = __webpack_require__ (2);
+const Grid = __webpack_require__(10);
+
+
+let mainGrid = new Grid($("#mainGrid"), 20, 10);
+let nextPieceGrid = new Grid($("#nextPieceGrid"), 4, 4);
+$(document).one("keydown", function(e) {
+  if (e.which === 32) {
+    $('#directions').toggle();
+    new Game(mainGrid);
+
+  }
+});
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 const IPiece = __webpack_require__(3);
-const OPiece = __webpack_require__(6);
-const JPiece = __webpack_require__(4);
-const LPiece = __webpack_require__(5);
+const OPiece = __webpack_require__(4);
+const JPiece = __webpack_require__(5);
+const LPiece = __webpack_require__(6);
 const SPiece = __webpack_require__(7);
-const TPiece = __webpack_require__(9);
-const ZPiece = __webpack_require__(10);
+const TPiece = __webpack_require__(8);
+const ZPiece = __webpack_require__(9);
 
 class Game {
 
@@ -275,7 +291,7 @@ class Game {
   }
 
   displayNextPiece() {
-    $( `#nextPieceGrid li`).css("background-color", "transparent");
+    $( `#nextPieceGrid li`).css("background", "transparent");
     let nextPiece = this.pieces[0];
     let nextPieceDisplayed = [];
 
@@ -284,7 +300,8 @@ class Game {
     });
 
     nextPieceDisplayed.forEach( (piecePo) => {
-      $( `#nextPieceGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background-color", nextPiece.color());
+      $( `#nextPieceGrid li[pos='${piecePo[0]},${piecePo[1]}']` ).css("background", nextPiece.color());
+
     });
   }
 
@@ -348,7 +365,7 @@ class Game {
 
   generatePiece() {
     let pieces = [IPiece, OPiece, JPiece, LPiece, SPiece, TPiece, ZPiece];
-    let pieceNum = Math.floor(Math.random() * 6);
+    let pieceNum = Math.floor(Math.random() * 7);
     let newPiece = new pieces[pieceNum](this.grid);
 
     if (
@@ -440,7 +457,298 @@ module.exports = Game;
 
 
 /***/ }),
-/* 2 */
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class IPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#4eab4e, #051905)";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-3, 3], [-3, 4], [-3,5], [-3,6] ],
+      [ [-5, 4], [-4, 4], [-3, 4], [-2, 4] ],
+      [ [-4, 3], [-4, 4], [-4,5], [-4,6] ],
+      [ [-5, 5], [-4, 5], [-3, 5], [-2, 5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+}
+
+module.exports = IPiece;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class OPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#6d6dff, #282871)";
+  }
+
+  setPos() {
+    this.piecePos = [ [-2, 4], [-3, 4], [-2, 5], [-3, 5] ];
+    this.colorPos();
+  }
+
+  rotate() {
+    return;
+  }
+
+}
+
+module.exports = OPiece;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class JPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#fb544e, #440704)";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 4);
+  }
+
+  setPos() {
+    this.rotationKeys = [
+      [ [-3,3], [-3,4], [-3,5], [-2,5] ],
+      [ [-2,3], [-4,4], [-3,4], [-2,4]  ],
+      [ [-4,3], [-3,3], [-3,4], [-3,5] ],
+      [ [-4,4], [-3,4], [-2,4], [-4,5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+
+}
+
+module.exports = JPiece;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class LPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#fbfb57, #737335)";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 4);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-2,3], [-3,3], [-3,4], [-3,5] ],
+      [ [-4,3], [-4,4], [-3,4], [-2,4] ],
+      [ [-3,3], [-3, 4], [-3, 5], [-4, 5] ],
+      [ [-4,4], [-3,4], [-2, 4], [-2, 5] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = LPiece;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class SPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#e8ac3f, #543f17)";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-3,3], [-3,4], [-4,4], [-4,5] ],
+      [ [-3,4], [-4,4], [-2,5], [-3,5] ],
+      [ [-2,3], [-2,4], [-3,4], [-3,5] ],
+      [ [-4,3], [-3,3], [-3,4], [-2,4] ]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = SPiece;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class TPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(#a259a2, #191719)";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 4);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-3, 3], [-4,4], [-3,4], [-3,5] ],
+      [ [-3,4], [-4,4], [-2,4], [-3,5] ],
+      [ [-3,3], [-3,4], [-2,4], [-3,5] ],
+      [ [-3,3], [-4,4], [-2,4], [-3, 4]]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = TPiece;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Piece = __webpack_require__(0);
+
+class ZPiece extends Piece  {
+
+  constructor(grid){
+    super(grid);
+
+  }
+
+  color() {
+    return "radial-gradient(rgba(0, 255, 255, 1), rgb(0, 107, 107))";
+  }
+
+  setLayout() {
+    return Math.floor(Math.random() * 2);
+
+  }
+
+  setPos() {
+
+    this.rotationKeys = [
+      [ [-4,3], [-4,4], [-3,4], [-3,5] ],
+      [ [-3,4], [-4,5], [-2,4], [-3,5] ],
+      [ [-3,3], [-3,4], [-2,4], [-2,5]],
+      [ [-3,3], [-4,4], [-2,3], [-3,4]]
+    ];
+
+    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
+    this.colorPos();
+  }
+
+
+
+
+
+}
+
+module.exports = ZPiece;
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 class Grid {
@@ -499,316 +807,6 @@ class Grid {
 }
 
 module.exports = Grid;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class IPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#4eab4e, #051905)";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 2);
-  }
-
-  setPos() {
-
-    this.rotationKeys = [
-      [ [-3, 3], [-3, 4], [-3,5], [-3,6] ],
-      [ [-5, 4], [-4, 4], [-3, 4], [-2, 4] ],
-      [ [-4, 3], [-4, 4], [-4,5], [-4,6] ],
-      [ [-5, 5], [-4, 5], [-3, 5], [-2, 5] ]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-}
-
-module.exports = IPiece;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class JPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#fb544e, #440704)";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 4);
-  }
-
-  setPos() {
-    this.rotationKeys = [
-      [ [-3,3], [-3,4], [-3,5], [-2,5] ],
-      [ [-2,3], [-4,4], [-3,4], [-2,4]  ],
-      [ [-4,3], [-3,3], [-3,4], [-3,5] ],
-      [ [-4,4], [-3,4], [-2,4], [-4,5] ]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-
-
-
-}
-
-module.exports = JPiece;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class LPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#fbfb57, #737335)";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 4);
-
-  }
-
-  setPos() {
-
-    this.rotationKeys = [
-      [ [-2,3], [-3,3], [-3,4], [-3,5] ],
-      [ [-4,3], [-4,4], [-3,4], [-2,4] ],
-      [ [-3,3], [-3, 4], [-3, 5], [-4, 5] ],
-      [ [-4,4], [-3,4], [-2, 4], [-2, 5] ]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-
-
-}
-
-module.exports = LPiece;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class OPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#6d6dff, #282871)";
-  }
-
-  setPos() {
-    this.piecePos = [ [-2, 4], [-3, 4], [-2, 5], [-3, 5] ];
-    this.colorPos();
-  }
-
-  rotate() {
-    return;
-  }
-
-}
-
-module.exports = OPiece;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class SPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#e8ac3f, #543f17)";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 2);
-
-  }
-
-  setPos() {
-
-    this.rotationKeys = [
-      [ [-3,3], [-3,4], [-4,4], [-4,5] ],
-      [ [-3,4], [-4,4], [-2,5], [-3,5] ],
-      [ [-2,3], [-2,4], [-3,4], [-3,5] ],
-      [ [-4,3], [-3,3], [-3,4], [-2,4] ]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-
-
-}
-
-module.exports = SPiece;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Game = __webpack_require__ (1);
-const Grid = __webpack_require__(2);
-
-
-let mainGrid = new Grid($("#mainGrid"), 20, 10);
-let nextPieceGrid = new Grid($("#nextPieceGrid"), 4, 4);
-$(document).one("keydown", function(e) {
-  if (e.which === 32) {
-    $('#directions').toggle();
-    new Game(mainGrid);
-
-  }
-});
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class TPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "radial-gradient(#a259a2, #191719)";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 4);
-
-  }
-
-  setPos() {
-
-    this.rotationKeys = [
-      [ [-3, 3], [-4,4], [-3,4], [-3,5] ],
-      [ [-3,4], [-4,4], [-2,4], [-3,5] ],
-      [ [-3,3], [-3,4], [-2,4], [-3,5] ],
-      [ [-3,3], [-4,4], [-2,4], [-3, 4]]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-
-
-}
-
-module.exports = TPiece;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Piece = __webpack_require__(0);
-
-class ZPiece extends Piece  {
-
-  constructor(grid){
-    super(grid);
-
-  }
-
-  color() {
-    return "cyan";
-  }
-
-  setLayout() {
-    return Math.floor(Math.random() * 2);
-
-  }
-
-  setPos() {
-
-    this.rotationKeys = [
-      [ [-4,3], [-4,4], [-3,4], [-3,5] ],
-      [ [-3,4], [-4,5], [-2,4], [-3,5] ],
-      [ [-3,3], [-3,4], [-2,4], [-2,5]],
-      [ [-3,3], [-4,4], [-2,3], [-3,4]]
-    ];
-
-    this.piecePos = JSON.parse(JSON.stringify(this.rotationKeys[this.pieceLayout]));
-    this.colorPos();
-  }
-
-
-
-
-
-}
-
-module.exports = ZPiece;
 
 
 /***/ })
